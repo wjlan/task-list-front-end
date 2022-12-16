@@ -3,21 +3,24 @@ import PropTypes from 'prop-types';
 import Task from './Task';
 import './TaskList.css';
 
-const TaskList = ({tasks, updateIsComplete}) => {
-  const getTaskListJSX = (tasks) => {
-    return tasks.map((task) => {
-      return (
-        <Task
-          key={task.id}
-          id={task.id}
-          title={task.title}
-          isComplete={task.isComplete}
-          updateIsComplete={updateIsComplete}
-        />
-      );
-    });
-  };
-  return <ul className="tasks__list no-bullet">{getTaskListJSX(tasks)}</ul>;
+const TaskList = (props) => {
+  const taskListComponents = [];
+  const taskList = props.tasks;
+  const updateIsComplete = props.updateIsComplete;
+
+  for (const task of taskList) {
+    taskListComponents.push(
+      <Task
+        key={task.id}
+        id={task.id}
+        title={task.title}
+        isComplete={task.isComplete}
+        updateIsComplete={updateIsComplete}
+      ></Task>
+    );
+  }
+
+  return <ul className="tasks__list no-bullet">{taskListComponents}</ul>;
 };
 
 TaskList.propTypes = {
@@ -28,7 +31,7 @@ TaskList.propTypes = {
       isComplete: PropTypes.bool.isRequired,
     })
   ).isRequired,
-  updateIsComplete: PropTypes.func.isRequired
+  updateIsComplete: PropTypes.func.isRequired,
 };
 
 export default TaskList;

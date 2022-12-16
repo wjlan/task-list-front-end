@@ -16,18 +16,26 @@ const TASKS = [
 ];
 
 const App = () => {
-  const initialCopy = TASKS.map(task => {
-    return {...task};
+  const initialCopy = TASKS.map((task) => {
+    return { ...task };
   });
 
   const [taskData, setTaskData] = useState(initialCopy);
 
-  const updateIsComplete = (taskId) => {
-    console.log("calling updateIsComplete");
-  }
-
-
- 
+  const updateIsComplete = (id) => {
+    const tasks = taskData.map((task) => {
+      if (task.id === id) {
+        const newTask = {
+          ...task,
+          isComplete: !task.isComplete,
+        };
+        return newTask;
+      } else {
+        return task;
+      }
+    });
+    setTaskData(tasks);
+  };
 
   return (
     <div className="App">
@@ -36,7 +44,7 @@ const App = () => {
       </header>
       <main>
         <div>
-          {<TaskList tasks={initialCopy} updateIsComplete={updateIsComplete} />}
+          <TaskList tasks={taskData} updateIsComplete={updateIsComplete} />
         </div>
       </main>
     </div>
