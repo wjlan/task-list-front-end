@@ -37,6 +37,16 @@ const App = () => {
     setTaskData(tasks);
   };
 
+  const deleteTask = (id) => {
+    const tasks = [];
+    for (const task of taskData) {
+      if (task.id !== id) {
+        tasks.push(task);
+      }
+    } 
+    setTaskData(tasks);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -44,7 +54,7 @@ const App = () => {
       </header>
       <main>
         <div>
-          <TaskList tasks={taskData} updateIsComplete={updateIsComplete} />
+          <TaskList tasks={taskData} updateIsComplete={updateIsComplete} deleteTask={deleteTask} />
         </div>
       </main>
     </div>

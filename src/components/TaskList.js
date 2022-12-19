@@ -7,6 +7,7 @@ const TaskList = (props) => {
   const taskListComponents = [];
   const taskList = props.tasks;
   const updateIsComplete = props.updateIsComplete;
+  const deleteTask = props.deleteTask;
 
   for (const task of taskList) {
     taskListComponents.push(
@@ -16,6 +17,7 @@ const TaskList = (props) => {
         title={task.title}
         isComplete={task.isComplete}
         updateIsComplete={updateIsComplete}
+        deleteTask={deleteTask}
       ></Task>
     );
   }
@@ -32,6 +34,7 @@ TaskList.propTypes = {
     })
   ).isRequired,
   updateIsComplete: PropTypes.func.isRequired,
+  deleteTask: PropTypes.func.isRequired
 };
 
 export default TaskList;
