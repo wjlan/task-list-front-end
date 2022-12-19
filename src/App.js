@@ -1,50 +1,72 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TaskList from './components/TaskList.js';
 import './App.css';
-
-const TASKS = [
-  {
-    id: 1,
-    title: 'Mow the lawn',
-    isComplete: false,
-  },
-  {
-    id: 2,
-    title: 'Cook Pasta',
-    isComplete: true,
-  },
-];
+import axios from 'axios';
 
 const App = () => {
-  const initialCopy = TASKS.map((task) => {
-    return { ...task };
-  });
+  const [taskData, setTaskData] = useState([]);
 
-  const [taskData, setTaskData] = useState(initialCopy);
+  const URL = 'http://localhost:5000/tasks';
 
-  const updateIsComplete = (id) => {
-    const tasks = taskData.map((task) => {
-      if (task.id === id) {
-        const newTask = {
-          ...task,
-          isComplete: !task.isComplete,
-        };
-        return newTask;
-      } else {
-        return task;
-      }
-    });
-    setTaskData(tasks);
+  useEffect(() => {
+    axios
+      .get(URL)
+      .then((response) => {
+        const taskDataFromAPI = response.data.map((task) => {
+          return {
+            id: task.id,
+            title: task.title,
+            isComplete: task.is_complete,
+          };
+        });
+        setTaskData(taskDataFromAPI);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  const updateIsComplete = (id, originalStatus) => {
+    const URLPath = originalStatus
+      ? `${URL}/${id}/mark_incomplete`
+      : `${URL}/${id}/mark_complete`;
+
+    axios
+      .patch(URLPath)
+      .then(() => {
+        const updatedTasks = taskData.map((task) => {
+          if (task.id === id) {
+            const newTask = {
+              ...task,
+              isComplete: !task.isComplete,
+            };
+            return newTask;
+          } else {
+            return task;
+          }
+        });
+        setTaskData(updatedTasks);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const deleteTask = (id) => {
-    const tasks = [];
-    for (const task of taskData) {
-      if (task.id !== id) {
-        tasks.push(task);
-      }
-    } 
-    setTaskData(tasks);
+    axios
+      .delete(`${URL}/${id}`)
+      .then(() => {
+        const updatedTasks = [];
+        for (const task of taskData) {
+          if (task.id !== id) {
+            updatedTasks.push(task);
+          }
+        }
+        setTaskData(updatedTasks);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -54,7 +76,11 @@ const App = () => {
       </header>
       <main>
         <div>
-          <TaskList tasks={taskData} updateIsComplete={updateIsComplete} deleteTask={deleteTask} />
+          <TaskList
+            tasks={taskData}
+            updateIsComplete={updateIsComplete}
+            deleteTask={deleteTask}
+          />
         </div>
       </main>
     </div>
