@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TaskList from './components/TaskList.js';
+import NewTaskForm from './components/NewTaskForm.js';
 import './App.css';
 import axios from 'axios';
 
@@ -8,7 +9,7 @@ const App = () => {
 
   const URL = 'http://localhost:5000/tasks';
 
-  useEffect(() => {
+  const getAllTasks = () => {
     axios
       .get(URL)
       .then((response) => {
@@ -24,7 +25,9 @@ const App = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  };
+
+  useEffect(getAllTasks, []);
 
   const updateIsComplete = (id, originalStatus) => {
     const URLPath = originalStatus
@@ -34,18 +37,7 @@ const App = () => {
     axios
       .patch(URLPath)
       .then(() => {
-        const updatedTasks = taskData.map((task) => {
-          if (task.id === id) {
-            const newTask = {
-              ...task,
-              isComplete: !task.isComplete,
-            };
-            return newTask;
-          } else {
-            return task;
-          }
-        });
-        setTaskData(updatedTasks);
+        getAllTasks();
       })
       .catch((error) => {
         console.log(error);
@@ -56,13 +48,18 @@ const App = () => {
     axios
       .delete(`${URL}/${id}`)
       .then(() => {
-        const updatedTasks = [];
-        for (const task of taskData) {
-          if (task.id !== id) {
-            updatedTasks.push(task);
-          }
-        }
-        setTaskData(updatedTasks);
+        getAllTasks();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const addNewTask = (taskTitle) => {
+    axios
+      .post(URL, { title: taskTitle, description: '' })
+      .then(() => {
+        getAllTasks();
       })
       .catch((error) => {
         console.log(error);
@@ -81,6 +78,9 @@ const App = () => {
             updateIsComplete={updateIsComplete}
             deleteTask={deleteTask}
           />
+        </div>
+        <div>
+          <NewTaskForm addNewTask={addNewTask}></NewTaskForm>
         </div>
       </main>
     </div>

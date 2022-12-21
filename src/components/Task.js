@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import './Task.css';
 
 const Task = (props) => {
@@ -14,12 +13,19 @@ const Task = (props) => {
       <button
         className={`tasks__item__toggle ${buttonClass}`}
         onClick={() => {
-          updateIsComplete(props.id);
+          updateIsComplete(props.id, props.isComplete);
         }}
       >
         {props.title}
       </button>
-      <button className="tasks__item__remove button" onClick={() => {deleteTask(props.id);}}>x</button>
+      <button
+        className="tasks__item__remove button"
+        onClick={() => {
+          deleteTask(props.id);
+        }}
+      >
+        x
+      </button>
     </li>
   );
 };
@@ -29,7 +35,7 @@ Task.propTypes = {
   title: PropTypes.string.isRequired,
   isComplete: PropTypes.bool.isRequired,
   updateIsComplete: PropTypes.func.isRequired,
-  deleteTask: PropTypes.func.isRequired
+  deleteTask: PropTypes.func.isRequired,
 };
 
 export default Task;
